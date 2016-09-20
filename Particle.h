@@ -17,16 +17,16 @@ namespace ParticleFireSimulation
         Particle() : _x(0), _y(0)
         {
             _angle = (2 * M_PI * (rand()) / RAND_MAX);
-            _speed = (0.001 * rand())/RAND_MAX;
+            _speed = (0.0001 * rand())/RAND_MAX;
         }
 
         virtual ~Particle()
         {}
 
-        void update()
+        void update(int interval)
         {
-            _x += _speed * cos(_angle);
-            _y += _speed * sin(_angle);
+            _x += _speed * cos(_angle) * interval;
+            _y += _speed * sin(_angle) * interval;
         }
 
         void setX(double x)

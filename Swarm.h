@@ -12,24 +12,30 @@ namespace ParticleFireSimulation
     class Swarm
     {
     public:
-        const static int NParticles = 5000;
+        const static int NParticles = 50000;
 
     public:
-        Swarm(){_particles = new Particle[NParticles];}
+        Swarm(): lastTime(0)
+        {_particles = new Particle[NParticles];}
         virtual ~Swarm(){delete [] _particles;}
 
-        void update()
+        void update(int elapsed)
         {
+            int interval = elapsed - lastTime;
+
             for (int i = 0; i < Swarm::NParticles; i++)
             {
-                _particles[i].update();
+                _particles[i].update(interval);
             }
+
+            lastTime = elapsed;
         }
 
         const Particle* const getParticles(){ return _particles;}
 
     private:
         Particle* _particles;
+        int lastTime;
     };
 
 }
