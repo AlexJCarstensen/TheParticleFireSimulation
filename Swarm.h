@@ -12,11 +12,19 @@ namespace ParticleFireSimulation
     class Swarm
     {
     public:
-        const static int NParticles = 5000;
+        const static int NParticles = 1000;
 
     public:
         Swarm(){_particles = new Particle[NParticles];}
         virtual ~Swarm(){delete [] _particles;}
+
+        void update()
+        {
+            for (int i = 0; i < Swarm::NParticles; i++)
+            {
+                _particles[i].update();
+            }
+        }
 
         const Particle* const getParticles(){ return _particles;}
 

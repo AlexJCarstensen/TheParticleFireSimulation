@@ -86,6 +86,7 @@ namespace ParticleFireSimulation
             SDL_RenderClear(_renderer);
             SDL_RenderCopy(_renderer, _texture, NULL, NULL);
             SDL_RenderPresent(_renderer);
+
         }
         void setPixel(int x, int y, Uint8 red, Uint8 green, Uint8 blue)
         {
@@ -104,6 +105,9 @@ namespace ParticleFireSimulation
 
             _buffer[(y * SCREEN_WIDTH) + x] = color;
 
+        }
+        void clear(){
+            memset(_buffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
         }
         void close()
         {
