@@ -12,7 +12,7 @@ namespace ParticleFireSimulation
     class Swarm
     {
     public:
-        const static int NParticles = 1000;
+        const static int NParticles = 5000;
 
     public:
         Swarm(){_particles = new Particle[NParticles];}

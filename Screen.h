@@ -63,8 +63,7 @@ namespace ParticleFireSimulation
             }
 
             _buffer = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
-            //setting the color
-            memset(_buffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+            clear();
 
             return true;
         }
