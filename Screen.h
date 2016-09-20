@@ -25,12 +25,7 @@ namespace ParticleFireSimulation
         bool init()
         {
             if (SDL_Init(SDL_INIT_VIDEO) < 0)
-            {
-                cout << "SDL init failed." << endl;
                 return false;
-            }
-
-            cout << "SDL init succeeded" << endl;
 
             _window = SDL_CreateWindow(
                     "Particle Fire Explosion",
@@ -71,13 +66,6 @@ namespace ParticleFireSimulation
             //setting the color
             memset(_buffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
 
-            //setting pixel color
-            for (int i = 0; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
-            {
-                _buffer[i] = 0xFF0000FF;
-            }
-
-
             return true;
         }
 
@@ -101,6 +89,9 @@ namespace ParticleFireSimulation
         }
         void setPixel(int x, int y, Uint8 red, Uint8 green, Uint8 blue)
         {
+            if(x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
+                return;
+
             Uint32 color = 0;
 
             color += red;
