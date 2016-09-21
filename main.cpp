@@ -10,7 +10,7 @@ using namespace ParticleFireSimulation;
 
 int main()
 {
-srand(time(NULL));
+//(time(NULL));
     Screen screen;
 
     screen.init();
@@ -20,7 +20,6 @@ srand(time(NULL));
     while(true)
     {
         int elapsed = SDL_GetTicks();
-        //screen.clear();
         swarm.update(elapsed);
         unsigned char green = (unsigned char) ((1 + sin(elapsed * 0.001)) * 128);
         unsigned char red = (unsigned char) ((1 + sin(elapsed * 0.002)) * 128);

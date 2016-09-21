@@ -16,17 +16,27 @@ namespace ParticleFireSimulation
     public:
         Particle() : x_(0), y_(0)
         {
-            angle_ = (2 * M_PI * (rand()) / RAND_MAX);
-            speed_ = (0.0001 * rand())/RAND_MAX; 
+            init();
         }
 
         virtual ~Particle()
         {}
 
+
         void update(int interval)
         {
+            angle_ += interval*0.0003;
+
             x_ += speed_ * cos(angle_) * interval;
             y_ += speed_ * sin(angle_) * interval;
+            if(x_ < -1 || x_ > 1 || y_ < -1 || y_ > 1)
+            {
+                init();
+            }
+            if(rand() < RAND_MAX/100)
+            {
+                init();
+            }
         }
 
         double getX() const
@@ -35,6 +45,16 @@ namespace ParticleFireSimulation
         double getY() const
         { return y_; }
 
+    private:
+        void init()
+        {
+            x_ = 0;
+            y_ = 0;
+            angle_ = (2 * M_PI * rand()) / RAND_MAX;
+            speed_ = (0.04* rand())/RAND_MAX;
+
+            speed_ *= speed_;
+        }
     private:
         double x_;
         double y_;
