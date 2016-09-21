@@ -20,14 +20,15 @@ namespace ParticleFireSimulation
         const int static SCREEN_WIDTH = 800;
         const int static SCREEN_HEIGHT = 600;
     public:
-        Screen() : _window(NULL), _renderer(NULL), _texture(NULL), _buffer(NULL)
+        Screen() : window_(NULL), renderer_(NULL), texture_(NULL), buffer_(NULL), buffer2_(NULL)
         {}
+
         bool init()
         {
             if (SDL_Init(SDL_INIT_VIDEO) < 0)
                 return false;
 
-            _window = SDL_CreateWindow(
+            window_ = SDL_CreateWindow(
                     "Particle Fire Explosion",
                     SDL_WINDOWPOS_UNDEFINED,
                     SDL_WINDOWPOS_UNDEFINED,
@@ -35,37 +36,80 @@ namespace ParticleFireSimulation
                     SCREEN_HEIGHT,
                     SDL_WINDOW_SHOWN);
 
-            if (_window == NULL)
+            if (window_ == NULL)
             {
                 SDL_Quit();
                 return false;
             }
 
-            _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_PRESENTVSYNC);
-            if (_renderer == NULL)
+            renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_PRESENTVSYNC);
+            if (renderer_ == NULL)
             {
                 cout << "Could not create renderer" << endl;
-                SDL_DestroyWindow(_window);
+                SDL_DestroyWindow(window_);
                 SDL_Quit();
                 return false;
             }
 
-            _texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, SCREEN_WIDTH,
+            texture_ = SDL_CreateTexture(renderer_, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_STATIC, SCREEN_WIDTH,
                                          SCREEN_HEIGHT);
 
-            if (_texture == NULL)
+            if (texture_ == NULL)
             {
                 cout << "Could not create renderer" << endl;
-                SDL_DestroyRenderer(_renderer);
-                SDL_DestroyWindow(_window);
+                SDL_DestroyRenderer(renderer_);
+                SDL_DestroyWindow(window_);
                 SDL_Quit();
                 return false;
             }
 
-            _buffer = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
+            buffer_ = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
+            buffer2_ = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
             clear();
 
             return true;
+        }
+
+        void blur()
+        {
+            Uint32 *temp = buffer_;
+            buffer_ = buffer2_;
+            buffer2_ = temp;
+
+            for (int y = 0; y < SCREEN_HEIGHT; y++)
+            {
+                for (int x = 0; x < SCREEN_WIDTH; x++)
+                {
+                    int redTotal = 0;
+                    int greenTotal = 0;
+                    int blueTotal = 0;
+
+                    for (int row = -1; row <= 1; row++)
+                    {
+                        for (int col = -1; col <= 1; col++)
+                        {
+                            int currentX = x + col;
+                            int currentY = y + row;
+
+                            if (currentX >= 0 && currentX < SCREEN_WIDTH && currentY >= 0 && currentY < SCREEN_HEIGHT)
+                            {
+                                Uint32 color = buffer2_[currentY * SCREEN_WIDTH + currentX];
+                                Uint8 red = color >> 24;
+                                Uint8 green = color >> 16;
+                                Uint8 blue = color >> 8;
+
+                                redTotal += red;
+                                greenTotal += green;
+                                blueTotal += blue;
+                            }
+                        }
+                    }
+                    Uint8 red = redTotal / 9;
+                    Uint8 green = greenTotal / 9;
+                    Uint8 blue = blueTotal / 9;
+                    setPixel(x,y,red,green, blue);
+                }
+            }
         }
 
         bool processEvents()
@@ -81,15 +125,16 @@ namespace ParticleFireSimulation
 
         void update()
         {
-            SDL_UpdateTexture(_texture, NULL, _buffer, SCREEN_WIDTH * sizeof(Uint32));
-            SDL_RenderClear(_renderer);
-            SDL_RenderCopy(_renderer, _texture, NULL, NULL);
-            SDL_RenderPresent(_renderer);
+            SDL_UpdateTexture(texture_, NULL, buffer_, SCREEN_WIDTH * sizeof(Uint32));
+            SDL_RenderClear(renderer_);
+            SDL_RenderCopy(renderer_, texture_, NULL, NULL);
+            SDL_RenderPresent(renderer_);
 
         }
+
         void setPixel(int x, int y, Uint8 red, Uint8 green, Uint8 blue)
         {
-            if(x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
+            if (x < 0 || x >= SCREEN_WIDTH || y < 0 || y >= SCREEN_HEIGHT)
                 return;
 
             Uint32 color = 0;
@@ -102,27 +147,33 @@ namespace ParticleFireSimulation
             color <<= 8;
             color += 0xFF;
 
-            _buffer[(y * SCREEN_WIDTH) + x] = color;
+            buffer_[(y * SCREEN_WIDTH) + x] = color;
 
         }
-        void clear(){
-            memset(_buffer, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+
+        void clear()
+        {
+            memset(buffer_, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+            memset(buffer2_, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
         }
+
         void close()
         {
-            delete[] _buffer;
+            delete[] buffer_;
+            delete[] buffer2_;
 
-            SDL_DestroyRenderer(_renderer);
-            SDL_DestroyTexture(_texture);
-            SDL_DestroyWindow(_window);
+            SDL_DestroyRenderer(renderer_);
+            SDL_DestroyTexture(texture_);
+            SDL_DestroyWindow(window_);
             SDL_Quit();
         }
 
     private:
-        SDL_Window *_window;
-        SDL_Renderer *_renderer;
-        SDL_Texture *_texture;
-        Uint32 *_buffer;
+        SDL_Window *window_;
+        SDL_Renderer *renderer_;
+        SDL_Texture *texture_;
+        Uint32 *buffer_;
+        Uint32 *buffer2_;
 
     };
 

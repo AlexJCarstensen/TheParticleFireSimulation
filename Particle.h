@@ -14,10 +14,10 @@ namespace ParticleFireSimulation
     class Particle
     {
     public:
-        Particle() : _x(0), _y(0)
+        Particle() : x_(0), y_(0)
         {
-            _angle = (2 * M_PI * (rand()) / RAND_MAX);
-            _speed = (0.0001 * rand())/RAND_MAX;
+            angle_ = (2 * M_PI * (rand()) / RAND_MAX);
+            speed_ = (0.0001 * rand())/RAND_MAX; 
         }
 
         virtual ~Particle()
@@ -25,27 +25,21 @@ namespace ParticleFireSimulation
 
         void update(int interval)
         {
-            _x += _speed * cos(_angle) * interval;
-            _y += _speed * sin(_angle) * interval;
+            x_ += speed_ * cos(angle_) * interval;
+            y_ += speed_ * sin(angle_) * interval;
         }
 
-        void setX(double x)
-        { _x = x; }
-
-        void setY(double y)
-        { _y = y; }
-
         double getX() const
-        { return _x; }
+        { return x_; }
 
         double getY() const
-        { return _y; }
+        { return y_; }
 
     private:
-        double _x;
-        double _y;
-        double _speed;
-        double _angle;
+        double x_;
+        double y_;
+        double speed_;
+        double angle_;
     };
 
 }

@@ -10,7 +10,7 @@ using namespace ParticleFireSimulation;
 
 int main()
 {
-
+srand(time(NULL));
     Screen screen;
 
     screen.init();
@@ -20,7 +20,7 @@ int main()
     while(true)
     {
         int elapsed = SDL_GetTicks();
-        screen.clear();
+        //screen.clear();
         swarm.update(elapsed);
         unsigned char green = (unsigned char) ((1 + sin(elapsed * 0.001)) * 128);
         unsigned char red = (unsigned char) ((1 + sin(elapsed * 0.002)) * 128);
@@ -35,7 +35,7 @@ int main()
             int y = particle.getY() * Screen::SCREEN_WIDTH/2 + Screen::SCREEN_HEIGHT/2 ;
             screen.setPixel(x,y,red, green, blue);
         }
-
+        screen.blur();
         screen.update();
 
         if (screen.processEvents() == false)
